@@ -1,8 +1,10 @@
+```{r echo=FALSE, results='hide', message=FALSE}
+library(ggplot2)
+```
 ---
 title: "Statistical Inference Course Project"
 output: word_document
 ---
-# Statistical Inference Course Project
 
 ## Assignment
 
@@ -19,8 +21,8 @@ In point 3, focus on the difference between the distribution of a large collecti
 This task demonstrates the central limit theorem, which states
 the distribution of the sample means follows the 
 central limit theorem, with states:
-* mean of sample means = population mean
-* sd of sample means = population mean/sqrt(n)
+* mean of sample means = xbar = population mean
+* sd of sample means = s = population mean/sqrt(n)
   * where n is the sample size
   * and sample means are normally (gaussian) distributed
 regardless of the population distribution, exponential in this case
@@ -35,8 +37,9 @@ Therefore, according to the central limit theorem, the distribution of
 the means of the 1,000 samples should be normally distributed with mean
 1/lambda and standard deviation (1/lambda)/sqrt(40).
 
-With a lambda of 0.2, this translates to a mean of 5 and 
-sd of 5/6.25 = 0.8.
+With a lambda of 0.2, this translates to 
+mean = 5 and 
+sd = 5/6.25 = 0.8.
 
 ## Simulations
 : Include English explanations of the simulations you ran, with the accompanying R code. Your explanations should make clear what the R code accomplishes.
@@ -53,44 +56,103 @@ The following code calculates the means and standard deviations of the sample me
 means <- sapply(sim, mean) # vector of length 1,000 (length(means))
 mean(means) # approx 1/lambda = 1/0.8 = 5
 sd(means) # approx 5/sqrt(40) = 5/6.25 = 0.8
+
+sds <- sapply(sim, sd)
+vars <- sapply(sim, var)
+mean(sds)
+sd(sds)
 ```
 
 ## Sample Mean versus Theoretical Mean
 : Include figures with titles. In the figures, highlight the means you are comparing. Include text that explains the figures and what is shown on them, and provides appropriate numbers.
+```{r echo=FALSE, results='hide', message=FALSE}}
+# Function factory. DRY.
+plotFunction <- function(fun, pl=seq(2,8)) {
+        
+        function(histx, argslist, plotlimits=pl) {
+                df <- data.frame(vals=histx)
+                print(args)
+                ggplot() + 
+                        geom_histogram(data = df, 
+                                       mapping = aes(x=vals, y=..density..)) + 
+                        stat_function(data = data.frame(x=plotlimits), 
+                                      mapping = aes(x), 
+                                      fun = fun, # defines the generated function
+                                      args = argslist, # must accommodate different dist'ns
+                                      color = "red")
+        }
+}
+```
+
+
+NEED TO SHOW THE DISTRIBUTION OF THE SAMPLE MEAN AND THE 95%
+CONFIDENCE INTERVAL. SHOW THE POPULATION MEAN (KNOWN) FALLS WITHIN
+THE 95% CONFIDENCE INTERVAL. 
+Maybe even show the forumula in mathematical notation.
 
 ```{r}
-getPlot <- function(histx, mu, sigma, plotlimits=seq(2,8)) {
-        df <- data.frame(vals=histx)
-        ggplot() + 
-                geom_histogram(data = df, 
-                               mapping = aes(x=vals, y=..density..)) + 
-                stat_function(data = data.frame(x=plotlimits), 
-                              mapping = aes(x), 
-                              fun = dnorm, 
-                              args = list(mean=mu, sd=sigma), 
-                              color = "red")
-}
-theoretical_mean = 1/0.2
-theoretical_sd = (1/0.2)/sqrt(sample_size)
+# normPlot <- function(histx, mu, sigma, plotlimits=seq(2,8)) {
+#         df <- data.frame(vals=histx)
+#         ggplot() + 
+#                 geom_histogram(data = df, 
+#                                mapping = aes(x=vals, y=..density..)) + 
+#                 stat_function(data = data.frame(x=plotlimits), 
+#                               mapping = aes(x), 
+#                               fun = dnorm, 
+#                               args = list(mean=mu, sd=sigma), 
+#                               color = "red")
+# }
+theoretical_mean_of_means = 1/0.2
+theoretical_sd_of_means = (1/0.2)/sqrt(sample_size)
 
-getPlot(means, theoretical_mean, theoretical_sd)
+normPlot <- plotFunction(dnorm)
+normPlot(means, list(mean=theoretical_mean_of_means, sd=theoretical_sd_of_means))
 ```
+
 ## Sample Variance versus Theoretical Variance
 : Include figures (output from R) with titles. Highlight the variances you are comparing. Include text that explains your understanding of the differences of the variances.
+
+NEED TO SHOW THE DISTRIBUTION OF THE SAMPLE VARIANCE AND THE 95%
+CONFIDENCE INTERVAL. SHOW THE POPULATION VARIANCE (KNOWN) FALLS WITHIN
+THE 95% CONFIDENCE INTERVAL.
+Maybe even show the forumula in mathematical notation.
+
+```{r}
+# expPlot <- function(histx, rate, plotlimits=seq(2,8)) {
+#         dataframe <- data.frame(vals=histx)
+#         ggplot() + 
+#                 geom_histogram(data = dataframe, 
+#                                mapping = aes(x=vals, y=..density..)) + 
+#                 stat_function(data = data.frame(x=plotlimits), 
+#                               mapping = aes(x), 
+#                               fun = dexp, 
+#                               args = list(rate=rate), 
+#                               color = "red")
+# }
+
+theoretical_mean_of_sds = 1/0.2
+theoretical_sd_of_sds = 1 # (1/0.2)/sqrt(sample_size)
+
+expPlot <- plotFunction(dexp)
+expPlot(sds[[10]], list(rate=0.2)) # underlying dist'n is exp
+
+# chisqPlot <- function(histx, df, plotlimits=seq(2,8)) {
+#         dataframe <- data.frame(vals=histx)
+#         ggplot() + 
+#                 geom_histogram(data = dataframe, 
+#                                mapping = aes(x=vals, y=..density..)) + 
+#                 stat_function(data = data.frame(x=plotlimits), 
+#                               mapping = aes(x), 
+#                               fun = dchisq, 
+#                               args = list(df=df), 
+#                               color = "red")
+# }
+
+chisqPlot <- plotFunction(dschisq)
+chisqPlot(x, list(df=39)) # this is nothing yet
+```
 
 ## Distribution
 : Via figures and text, explain how one can tell the distribution is approximately normal. 
 
 
-
-```{r}
-summary(cars)
-```
-
-You can also embed plots, for example:
-
-```{r, echo=FALSE}
-plot(cars)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

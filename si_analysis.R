@@ -1,3 +1,4 @@
+library(ggplot2)
 
 # create vector of length 1,000 all of value 0.2 (lambda)
 lambda <- rep(0.2, 1000)
