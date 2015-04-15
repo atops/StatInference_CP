@@ -84,24 +84,12 @@ plotFunction <- function(fun, pl=seq(2,8)) {
 }
 ```
 
-
 NEED TO SHOW THE DISTRIBUTION OF THE SAMPLE MEAN AND THE 95%
 CONFIDENCE INTERVAL. SHOW THE POPULATION MEAN (KNOWN) FALLS WITHIN
 THE 95% CONFIDENCE INTERVAL. 
 Maybe even show the forumula in mathematical notation.
 
 ```{r}
-# normPlot <- function(histx, mu, sigma, plotlimits=seq(2,8)) {
-#         df <- data.frame(vals=histx)
-#         ggplot() + 
-#                 geom_histogram(data = df, 
-#                                mapping = aes(x=vals, y=..density..)) + 
-#                 stat_function(data = data.frame(x=plotlimits), 
-#                               mapping = aes(x), 
-#                               fun = dnorm, 
-#                               args = list(mean=mu, sd=sigma), 
-#                               color = "red")
-# }
 theoretical_mean_of_means = 1/0.2
 theoretical_sd_of_means = (1/0.2)/sqrt(sample_size)
 
@@ -118,35 +106,11 @@ THE 95% CONFIDENCE INTERVAL.
 Maybe even show the forumula in mathematical notation.
 
 ```{r}
-# expPlot <- function(histx, rate, plotlimits=seq(2,8)) {
-#         dataframe <- data.frame(vals=histx)
-#         ggplot() + 
-#                 geom_histogram(data = dataframe, 
-#                                mapping = aes(x=vals, y=..density..)) + 
-#                 stat_function(data = data.frame(x=plotlimits), 
-#                               mapping = aes(x), 
-#                               fun = dexp, 
-#                               args = list(rate=rate), 
-#                               color = "red")
-# }
-
 theoretical_mean_of_sds = 1/0.2
 theoretical_sd_of_sds = 1 # (1/0.2)/sqrt(sample_size)
 
 expPlot <- plotFunction(dexp)
 expPlot(sds[[10]], list(rate=0.2)) # underlying dist'n is exp
-
-# chisqPlot <- function(histx, df, plotlimits=seq(2,8)) {
-#         dataframe <- data.frame(vals=histx)
-#         ggplot() + 
-#                 geom_histogram(data = dataframe, 
-#                                mapping = aes(x=vals, y=..density..)) + 
-#                 stat_function(data = data.frame(x=plotlimits), 
-#                               mapping = aes(x), 
-#                               fun = dchisq, 
-#                               args = list(df=df), 
-#                               color = "red")
-# }
 
 chisqPlot <- plotFunction(dschisq)
 chisqPlot(x, list(df=39)) # this is nothing yet
