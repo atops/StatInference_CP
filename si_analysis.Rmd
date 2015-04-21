@@ -1,6 +1,8 @@
 ---
 title: "Statistical Inference Course Project"
-output: word_document
+output:
+  word_document:
+    reference_docx: "reference.docx"
 ---
 
 ```{r ggplot, echo=FALSE, results='hide', message=FALSE}
