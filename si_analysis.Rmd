@@ -5,6 +5,7 @@ output: word_document
 
 ```{r ggplot, echo=FALSE, results='hide', message=FALSE}
 library(ggplot2)
+options(scipen=7)
 ```
 
 ```{r simulation_parameters}
@@ -23,9 +24,9 @@ and the standard deviation is
 
 $\sigma =  1/\lambda$.
 
-Set $\lambda = `r lambdas[1]`$ for all of the simulations. We will investigate the distribution of averages of 40 exponentials. Note that we will do `r nsamples` simulations.
+Set $\lambda = `r lambdas[1]`$ for all of the simulations. We will investigate the distribution of averages of `r sample_size` exponentials. Note that we will do `r nsamples` simulations.
 
-We will illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponentials.  We will
+We will illustrate via simulation and associated explanatory text the properties of the distribution of the mean of `r sample_size` exponentials.  We will
 
 1. Show the sample mean and compare it to the theoretical mean of the distribution.
 2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
@@ -83,8 +84,10 @@ These are close to the theoretical mean and standard deviation, respectively, wh
 ## Sample Mean versus Theoretical Mean
 _Instructions: Include figures with titles. In the figures, highlight the means you are comparing. Include text that explains the figures and what is shown on them, and provides appropriate numbers._
 
-```{r echo=FALSE, results='hide', message=FALSE}
+```{r message=FALSE}
 # Function factory. DRY.
+# This function allows us to create histogram/distribution overlay plots
+# for any distribution. Used here for the Normal and Exponential.
 plotFunction <- function(fun, pl=seq(2,8)) {
         
         function(histx, argslist, plotlimits=pl, col="red") {
@@ -146,10 +149,11 @@ A $(1-\alpha)100\%$ confidence interval for $\sigma_{Y}^2$ is
 $\frac{(n_Y-1)s_Y^2}{\chi^2(n_Y-1)_\alpha/2} < \sigma_Y^2 < \frac{(n_Y-1)s_Y^2}{\chi^2(n_Y-1)_{1-\alpha/2}}$.
 
 In this case, $n_Y =$ `r nsamples`. Taking the square root of both sides to convert from the variance to the standard deviation,
+we get the confidence interval for $\sigma_Y$:
 
 ```{r}
-sigma_ci <- sqrt(c((nsamples-1) * sd(means)**2/qchisq(0.975, nsamples-1), 
-                   (nsamples-1) * sd(means)**2/qchisq(0.025, nsamples-1)))
+alphas <- c(0.975,0.025)
+sigma_ci <- sqrt((nsamples-1) * sd(means)**2/qchisq(alphas, nsamples-1))
 print(sigma_ci)
 ```
 
@@ -176,7 +180,14 @@ _Instructions: Via figures and text, explain how one can tell the distribution i
 
 There are statistical tests one can run to test for normality, but between the CLT and the visual appearance of the figure above where we overlaid the histogram of the data with a normal plot of $\mu=\bar{Y}$ and $\sigma=s_Y$, we can tell the distribution is approximately normal.
 
-The histogram of the means overlaid with the normal plot is shown again below. This is compared with a histogram of all 40,000 negative exponentials as a single sample, overlaid with an exponential distribution with $\lambda=0.2$. This is clearly exponentially distributed.
+We can show that the quantiles are similar:
+
+``` {r}
+quantile(rnorm(n=1000, mean=5, sd=1/lambdas[1]/sqrt(sample_size)))
+quantile(means)
+```
+
+The histogram of the means overlaid with the normal plot is shown again below. This is compared with a histogram of all `r (sample_size * nsamples)` negative exponentials as a single sample, overlaid with an exponential distribution with $\lambda=0.2$. This is clearly exponentially distributed.
 
 ```{r}
 print(p)
